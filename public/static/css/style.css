@@ -162,6 +162,7 @@ input#message {
     border: 0;
     outline: 0;
     background: rgba(255, 255, 255, 0.5);
+    color: #000;
     width: 400px;
 }
 

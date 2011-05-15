@@ -236,11 +236,8 @@ var Talk = {
     },
 
     // Set up the Talk object.
-    init: function(room) {
-        Talk.room = room;
-        var options = { transports: ['htmlfile', 
-                                     'xhr-multipart', 'xhr-polling', 
-                                     'jsonp-polling' ]};
+    init: function(options) {
+        Talk.room = options.room;
         Talk.socket = new io.Socket(null, options);
         Talk.socket.connect();
         Talk.socket.on("connect", Talk.connect);

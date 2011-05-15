@@ -23,7 +23,15 @@
 
         <script type="text/javascript">
         $(function() {
-            Talk.init("<%= room.id %>");
+            Talk.init({
+                room: "<%= room.id %>", 
+                port: <%= config.port %>,
+                transports: [ 
+                <% for (var i=0; i<config.transports.length; i++) { %>
+                    "<%= config.transports[i] %>",
+                <% } %>
+                ]
+            });
         });
         </script>
     </body>

@@ -3,12 +3,14 @@ This is just a simple chat program that lets you create rooms
 and send out links to your friends.
 */
 
+var sys = require("sys");
 var express = require("express");
 var app = express.createServer();
 
 // Configuration
+var config = require("./config.js").configure();
 app.use(express.static(__dirname + '/public'));
-app.use(express.cookieParser({"secret": "whatever1234"}));
+app.use(express.cookieParser({"secret": config.cookieSecret}));
 app.use(express.bodyParser());
 app.set("view engine", "ejs");
 app.set("view options", { layout: false });
@@ -17,7 +19,7 @@ app.set("view options", { layout: false });
 app.get("/", function(req, res) {
     var xsrf = generateId();
     res.cookie("_xsrf", xsrf);
-    res.render("index.ejs", { xsrf: xsrf });
+    res.render("index.ejs", { xsrf: xsrf, config: config });
 });
 
 app.post("/room", function(req, res) {
@@ -42,16 +44,16 @@ app.get("/room/:id", function(req, res) {
     if (!room)
         // don't know, going home
         return res.redirect("/");
-    res.render("room.ejs", { room: room });
+    res.render("room.ejs", { room: room, config: config });
 });
 
 // Starting HTTP server
-app.listen(3000);
+app.listen(config.port);
+sys.log("Starting app on port "+config.port);
 
 // Setting up Socket.IO
 var io = require("socket.io");
-var socket = io.listen(app, { transports: [ 'htmlfile', 'xhr-multipart', 
-                                            'xhr-polling', 'jsonp-polling' ]});
+var socket = io.listen(app, { transports: config.transports });
 
 // Random id generator
 var generateId = function() {
@@ -114,8 +116,6 @@ var Room = function(id, name) {
     };
 }
 
-var ROOMTIMEOUT = 60000 * 10; // ten minutes (if no users around)
-
 // All of the chat rooms associated with this server
 var Rooms = {
     rooms: {},
@@ -141,15 +141,14 @@ var Rooms = {
     // if necessary
     checkActivity: function () {
         for (roomName in Rooms.rooms) {
-            if (!Rooms.rooms.hasOwnProperty(roomName))
-                continue;
             var room = Rooms.rooms[roomName];
+            if (!room || !room.id)
+                continue
             var lastActivity = room.checkActivity();
-            var expires = lastActivity + ROOMTIMEOUT;
+            var expires = lastActivity + config.roomTimeout;
             var userCount = room.allUsers().length;
             if (expires < new Date().getTime() && userCount == 0) {
                 // deleting room
-                var room = Rooms.rooms[roomName];
                 Rooms.rooms[roomName] = null;
             }
         }
@@ -181,8 +180,6 @@ var User = function(client) {
     };
 };
 
-var AWAYTIMEOUT = 60000 * 5; // five minutes
-
 // A list of users, with appropriate methods
 var Users = function(room) {
     this.room = room;
@@ -208,7 +205,7 @@ var Users = function(room) {
             this[user.name] = null;
             return true;
         } else {
-            console.log("sessions don't match -- not deleting.");
+            sys.log("sessions don't match -- not deleting.");
             return false;
         }
     };
@@ -255,7 +252,7 @@ var Users = function(room) {
             if (user.activity > mostRecent)
                 mostRecent = user.activity;
             var diff = now - user.activity;
-            if (diff > AWAYTIMEOUT) {
+            if (diff > config.awayTimout) {
                 if (user.status != "away") {
                     
                     user.status = "away";
@@ -339,7 +336,7 @@ var Commands = {
                  name: user.name }
         var room = user.getRoom();
         if (!room) {
-            console.log("No room for user?");
+            sys.log("No room for user?");
             return;
         }
         var result = room.removeUser(user);
@@ -431,4 +428,4 @@ socket.on("connection", function(client) {
 });
 
 // Set up activity checking interval
-var activityInterval = setInterval(Rooms.checkActivity, 5000);
+var activityInterval = setInterval(Rooms.checkActivity, config.checkInterval);
