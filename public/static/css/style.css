@@ -1,0 +1,91 @@
+body, input, textarea {
+    font-family: "Shanti", "Verdana", "sans-serif";
+}
+
+#chat {
+    width: 600px;
+    height: 250px;
+    border: 1px solid #000;
+    list-style: none;
+    padding: 5px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    float: left;
+}
+
+    #chat li {
+        padding: 3px 5px;
+    }
+
+    #chat li .join, #chat li .left, #chat li .away {
+        color: #AAA;
+    }
+
+    #chat li.you {
+        background-color: #EEE;
+    }
+
+    #chat li .left {
+        font-style: italic;
+    }
+
+    #chat li .away {
+        font-style: italic;
+    }
+
+    #chat li .error {
+        color: #C00;
+    }
+
+    #chat li .private {
+        color: #03B;
+    }
+
+    #chat li .to-private {
+        color: #0B3;
+    }
+
+#users {
+    float: left;
+    border: 1px solid #000;
+    border-left: none;
+    height: 250px;
+    width: 150px;
+    padding: 5px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    list-style: none;
+}
+
+    #users li {
+        padding: 3px 5px;
+        font-size: 12px;
+    }
+
+    #users li.away {
+        font-style: italic;
+    }
+
+    #users li.you {
+        font-weight: bold;
+    }
+
+    #users li.private {
+        color: #FFF;
+        background: #999;
+    }
+
+.message-bar {
+    width: 600px;
+}
+
+input#message {
+    padding: 3px 5px;
+    border: 1px solid #000;
+    width: 400px;
+}
+
+.clear {
+    clear: both;
+}
+
