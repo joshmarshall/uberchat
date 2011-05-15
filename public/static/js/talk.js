@@ -1,8 +1,16 @@
+/* This is the client side chat interface */
 var Talk = {
+
+    // Constants
+    MAXMESSAGES: 250, // before it starts "cleaning out"
+
+    // User variables
     username: null,
     private: null,
     socket: null,
+    room: null,
 
+    // Send a new chat message to the server
     chat: function(message) {
         if (message.replace(/^\s+|\s+$/, "") == "")
             return;
@@ -14,43 +22,59 @@ var Talk = {
         Talk.send(data);
     },
 
+    // Send a final data structure to the socket
     send: function(data) {
+        if (!data.room)
+            data.room = Talk.room;
         Talk.socket.send(data);
     },
 
+    // Upon initial connection, request a name
     connect: function() {
         Talk.name();
-        document.body.style.cursor = "default";
     },
 
+    // Let the user know when he / she has disconnected
+    // and empty the user list
     disconnect: function() {
         Talk.commands.error({ message: "You have disconnected."});
         var users = $("#users");
         users.empty();
     },
 
+    // Prompt for name and send it.
     name: function(msg) {
         if (!msg)
             msg = "What's your name?"
         Talk.username = prompt(msg);
         Talk.send({ command: "name", name: Talk.username });
+        $("#message").focus();
     },
 
+    // Get list of users for current room
     users: function() {
         Talk.send({ command: "users" });
     },
 
+    // Receive a message from the server and parse it
     receive: function(dataString) {
         var data = JSON.parse(dataString);
         if (Talk.commands.hasOwnProperty(data.command)) {
             Talk.commands[data.command](data);
         } else {
-            console.log("Unknown command: "+data.command);
+            Talk.commands.error({ message: "Unknown command "+data.command });
         }
     },
 
+    // Tell the server (nicely) that we're leaving
+    quit: function() {
+        Talk.send({ command: "quit" });
+    },
+
+    // The server response commands
     commands: {
         
+        // A user is inactive
         away: function(data) {
             var awaySpan = $("<span class='away'></span>");
             awaySpan.text(data.name+" is away.");
@@ -58,6 +82,7 @@ var Talk = {
             Talk.users();
         },
 
+        // A user broadcasted (or private messaged) the room / you
         broadcast: function(data) {
             var prefix = data.name;
             var msgSpan = $("<span class='message'></span>");
@@ -81,6 +106,7 @@ var Talk = {
             uel.addClass("active");
         },
 
+        // A new user joined the room
         join: function(data) {
             var message = data.name+" joined the channel.";
             var joinSpan = $("<span class='join'></span>");
@@ -105,8 +131,10 @@ var Talk = {
                 });
             }
             Talk.users();
+            $("#message").focus();
         },
 
+        // A user left the room
         leave: function(data) {
             var message = data.name+" left the channel.";
             var leftSpan = $("<span class='left'>"+message+"</span>");
@@ -114,16 +142,19 @@ var Talk = {
             Talk.users();
         },
 
+        // Your submitted name was invalid
         invalidName: function(data) {
             Talk.name(data.message+"\nTry again:");
         },
 
+        // There was an error processing the response
         error: function(data) {
             var message = "ERROR: "+data.message;
             var errorSpan = $("<span class='error'>"+message+"</span>");
             Talk.addEntry(errorSpan);
         },
 
+        // Returning a list of users
         users: function(data) {
             var users = $("#users");
             users.empty();
@@ -156,6 +187,7 @@ var Talk = {
 
     },
 
+    // Setting up a private message
     addPrivate: function(name) {
         if (Talk.private)
             Talk.clearPrivate();
@@ -172,6 +204,7 @@ var Talk = {
         $("#message").focus();
     },
 
+    // Clearing a private message setup
     clearPrivate: function() {
         var recipient = $("#recipient");
         recipient.text("");
@@ -188,17 +221,23 @@ var Talk = {
         $("#message").focus();
     },
 
+    // Add a chat entry, whether message, notification, etc.
     addEntry: function(childNode) {
         var li = $("<li class='entry'></li>");
         li.append(childNode);
         var chat = $("#chat");
+        while(chat.children().length > Talk.MAXMESSAGES) {
+            $(chat.children()[0]).remove();
+        }
         chat.append(li);
         var chatRaw = document.getElementById("chat");
         chatRaw.scrollTop = chatRaw.scrollHeight;
         return li;
     },
 
-    init: function() {
+    // Set up the Talk object.
+    init: function(room) {
+        Talk.room = room;
         var options = { transports: ['htmlfile', 
                                      'xhr-multipart', 'xhr-polling', 
                                      'jsonp-polling' ]};
@@ -207,6 +246,7 @@ var Talk = {
         Talk.socket.on("connect", Talk.connect);
         Talk.socket.on("message", Talk.receive);
         Talk.socket.on("disconnect", Talk.disconnect);
+        window.onbeforeunload = Talk.quit;
     }
 
 };

@@ -2,25 +2,22 @@
 
 <html>
     <head>
-        <title><%= title %></title>
-        <script src="/socket.io/socket.io.js" type="text/javascript"></script>
+        <title>Create Room</title>
         <script src="/static/js/jquery.js" type="text/javascript"></script>
-        <script src="/static/js/talk.js" type="text/javascript"></script>
+        <script src="/static/js/create.js" type="text/javascript"></script>
         <link href='http://fonts.googleapis.com/css?family=Shanti' rel='stylesheet' type='text/css'/>
         <link href="/static/css/style.css" rel="stylesheet" type="text/css"/>
     </head>
 
-    <body>
-        <h1>UberChat</h1>
-        <ul id="chat"></ul>
-        <ul id="users"></ul>
-        <div class="clear"></div>
-        <div class="message-bar">
-            <span id="recipient"></span>
-            <input id="message" type="text" name="message"/>
-            <button id="send">Send</button>
+    <body class="create">
+        <h1>Create Room</h1>
+        <div class="create-form">
+            <label class="room-name-label" for="name">
+                Your Chat Room's Name:
+            </label>
+            <input name="name" id="room-name" type="text" maxlength="24"/>
+            <input name="_xsrf" id="_xsrf" type="hidden" value="<%= xsrf %>"/>
+            <button id="room-name-button">Make It!</button>
         </div>
-
-        <script type="text/javascript">Talk.init();</script>
     </body>
 </html>

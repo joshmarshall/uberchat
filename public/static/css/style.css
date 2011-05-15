@@ -2,10 +2,89 @@ body, input, textarea {
     font-family: "Shanti", "Verdana", "sans-serif";
 }
 
+body {
+    background: url("/static/images/bg.jpg");
+    width: 800px;
+    margin: 0 auto;
+}
+
+h1 {
+    font-size: 48px;
+    text-align: center;
+    line-height: 56px;
+    letter-spacing: 0;
+    font-weight: normal;
+    margin: 50px 0 10px;
+    padding: 0;
+    color: #FFF;
+    text-shadow: 1px -2px 2px rgba(0, 0, 0, 0.3);
+}
+
+body.create h1 {
+    margin-top: 100px;
+    margin-bottom: 10px;
+}
+
+.create-form {
+    width: 400px;
+    margin: 0 auto;
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(0, 0, 0, 0.5);
+    border-left-color: rgba(255, 255, 255, 0.3);
+    border-bottom-color: rgba(255, 255, 255, 0.3);
+    padding: 30px;
+    border-radius: 10px;
+}
+
+    .create-form label {
+        display: block;
+        text-align: center;
+        color: #145;
+        font-size: 20px;
+        margin: 0 0 10px;
+    }
+
+    .create-form input {
+        border: 0;
+        outline: 0;
+        font-size: 32px;
+        padding: 3px 10px;
+        color: #000;
+        text-align: center;
+        border-radius: 6px;
+        line-height: 36px;
+        width: 320px;
+        display: block;
+        margin: 0 auto 10px;
+    }
+
+    .create-form button {
+        background: #145;
+        color: #FFF;
+        font-size: 18px;
+        display: block;
+        margin: 0 auto;
+        width: 200px;
+        border: 0;
+        outline: 0;
+        border-radius: 6px;
+        padding: 7px;
+        cursor: pointer;
+    }
+
+        .create-form button.disabled {
+            cursor: default;
+            color: #024;
+        }
+
+#chat, #users {
+    background: rgba(255, 255, 255, 0.5);
+}
+
 #chat {
+    border-radius: 10px 0 0 10px;
     width: 600px;
     height: 250px;
-    border: 1px solid #000;
     list-style: none;
     padding: 5px;
     overflow-y: scroll;
@@ -18,11 +97,11 @@ body, input, textarea {
     }
 
     #chat li .join, #chat li .left, #chat li .away {
-        color: #AAA;
+        color: rgba(255, 255, 255, 0.6);
     }
 
     #chat li.you {
-        background-color: #EEE;
+        background-color: rgba(255, 255, 255, 0.3);
     }
 
     #chat li .left {
@@ -42,16 +121,15 @@ body, input, textarea {
     }
 
     #chat li .to-private {
-        color: #0B3;
+        color: #062;
     }
 
 #users {
     float: left;
-    border: 1px solid #000;
-    border-left: none;
     height: 250px;
     width: 150px;
     padding: 5px;
+    border-radius: 0 10px 10px 0;
     overflow-y: scroll;
     overflow-x: hidden;
     list-style: none;
@@ -72,17 +150,33 @@ body, input, textarea {
 
     #users li.private {
         color: #FFF;
-        background: #999;
+        background: rgba(0, 0, 0, 0.5);
     }
 
-.message-bar {
-    width: 600px;
-}
 
 input#message {
-    padding: 3px 5px;
+    padding: 5px 7px;
     border: 1px solid #000;
+    font-size: 16px;
+    border-radius: 6px;
+    border: 0;
+    outline: 0;
+    background: rgba(255, 255, 255, 0.5);
     width: 400px;
+}
+
+.message-bar button {
+    width: 155px;
+    background: #145;
+    color: #FFF;
+    display: inline-block;
+    border: 0;
+    outline: 0;
+    font-size: 16px;
+    border-radius: 6px;
+    padding: 6px 0;
+    margin: 0 10px 0 10px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .clear {

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>Chat: <%= room.name %></title>
+        <script src="/socket.io/socket.io.js" type="text/javascript"></script>
+        <script src="/static/js/jquery.js" type="text/javascript"></script>
+        <script src="/static/js/talk.js" type="text/javascript"></script>
+        <link href='http://fonts.googleapis.com/css?family=Shanti' rel='stylesheet' type='text/css'/>
+        <link href="/static/css/style.css" rel="stylesheet" type="text/css"/>
+    </head>
+
+    <body>
+        <h1><%= room.name %></h1>
+        <ul id="chat"></ul>
+        <ul id="users"></ul>
+        <div class="clear"></div>
+        <div class="message-bar">
+            <span id="recipient"></span>
+            <input id="message" type="text" name="message"/>
+            <button id="send">Send</button>
+        </div>
+
+        <script type="text/javascript">
+        $(function() {
+            Talk.init("<%= room.id %>");
+        });
+        </script>
+    </body>
+</html>
